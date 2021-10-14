@@ -2492,8 +2492,8 @@ input[type="submit"]  {
 .greycharcoal, a.greycharcoal {color: #292929;}
 .orangelite, a.orangelite {color: #fdc265;}
 .orangemedium, a.orangemedium {color: #fdb037;}
-.orangedark, a.orangedark {color: #dc720d;} /* was #f69233 */
-.subhd, a.subhd {color: #f69233;}
+.orangedark, a.orangedark {color: #dc720d;} /* was #f27c0d */
+.subhd, a.subhd {color: #f27c0d;}
 .pink, a.pink {color: #d01a7e;}
 .purplelite, a.purplelite {color: #a788bc;}
 .purplemedium, a.purplemedium {color: #715aa3;}
@@ -2796,7 +2796,7 @@ blockquote {
 
 /* --- landing page hyperlinks hover may change from time to time --- */
 .lp a:hover, .lp h3 a:hover, .lp h2 a:hover {
-    color: #f69233;
+    color: #f27c0d;
 }
 
 
