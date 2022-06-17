@@ -2537,6 +2537,13 @@ input[type="submit"]  {
 .margintopminus5 {margin-top: -5px;}
 .marginbotminus5 {margin-bottom: -5px;}
 
+/* --- override gb block container for full-width --- */
+.gb-block-container.full-width-color,
+.full-width-color {
+	margin-left: -20px;
+	margin-right: -20px;
+}
+
 .padtopminus20 {padding-top: -20px;}
 .padbotminus20 {padding-bottom: -20px;}
 .padtopminus10 {padding-top: -10px;}
@@ -3918,6 +3925,15 @@ h6 {
 @media only screen and (max-width: 800px) {
   .ai1ec-agenda-widget-view {
     max-width: 100%;
+}
+
+/* --- originally at 600px breakpoint --- */
+.gb-layout-columns-2>.gb-layout-column-wrap.gb-is-responsive-column {
+    -ms-grid-columns: 1fr;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+        "col1"
+        "col2";
 }
 }
 
