@@ -1500,6 +1500,12 @@ div.gform_wrapper .gform_footer input[type="submit"] {
 	font-size: 14px;
 }
 
+/* --- Ninja Forms - ASK modifications --- */
+/* --- privacy policy --- */
+#nf-field-309-container, #nf-field-309-container p {
+	margin-bottom:0;
+}
+
 /* Jetpack
 --------------------------------------------- */
 
