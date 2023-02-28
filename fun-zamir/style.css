@@ -2426,7 +2426,6 @@ p.list {
 .right {  text-align: right; }
 .left {  text-align: left; }
 
-
 .dropcap2 {
     display: block;
     float: left;
@@ -2549,6 +2548,7 @@ input[type="submit"]  {
 	margin-left: -20px;
 	margin-right: -20px;
 }
+
 
 .padtopminus20 {padding-top: -20px;}
 .padbotminus20 {padding-bottom: -20px;}
@@ -3932,7 +3932,7 @@ h6 {
   .ai1ec-agenda-widget-view {
     max-width: 100%;
 }
-
+	
 /* --- originally at 600px breakpoint --- */
 .gb-layout-columns-2>.gb-layout-column-wrap.gb-is-responsive-column {
     -ms-grid-columns: 1fr;
@@ -3941,6 +3941,7 @@ h6 {
         "col1"
         "col2";
 }
+	
 }
 
 

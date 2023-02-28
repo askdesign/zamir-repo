@@ -234,9 +234,8 @@ function enqueue_dashicons() {
 //* Add woocommerce support
 add_theme_support( 'genesis-connect-woocommerce' );
 
-/* create_function was removed in PHP 8.0. -- comment out this section
 //* Woocommerce products per page
-add_filter( 'loop_shop_per_page', create_function( '$cols', 'return 24;' ), 20 ); */
+add_filter( 'loop_shop_per_page', create_function( '$cols', 'return 24;' ), 20 );
 
 //* Customize search form input box text
 add_filter( 'genesis_search_text', 'fun_search_text' );
