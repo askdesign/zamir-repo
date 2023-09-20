@@ -2,7 +2,7 @@
 	Theme Name: Fun WordPress Theme
 	Description: An eCommerce Genesis Theme
 	Author: Lindsey Riel
-	Author URI: https://www.prettydarncute.com/Customized by Anne S. Katzeff (ASK Design) for Zamir Chorale of Boston.
+	Author URI: https://www.prettydarncute.com/ Customized by Anne S. Katzeff (ASK Design) for Zamir Chorale of Boston.
 	Version: 1.1
  
 	Tags: ecommerce, woocommerce, genesis, black, white, custom templates, columns
@@ -1727,7 +1727,7 @@ Site Navigation
 	border: 2px solid #fff;
 	border-top: none;
 	color: #000;
-	font-size: 12px;
+	/* font-size: 12px; */
 	letter-spacing: 1px;
 	padding: 16px 10px;
 	position: relative;
