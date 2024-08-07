@@ -73,12 +73,11 @@ function get_login_link() {
         $format_classes .= ' eMember_protected_message_default';
     }
 
-    //eMember_not_a_member_msg - modified by ASK 080724
     if ($eMember_enable_fancy_login) {
         $url_text = '<div class="' . $format_classes . '">';
         $url_text .= EMEMBER_PLEASE . ' <a id="' . microtime(true) . '" class="emember_fancy_login_link activeLink" href="javascript:void(0);">' .
                 EMEMBER_LOGIN . '</a> ' . EMEMBER_TO_VIEW_CONTENT;
-        $url_text .= '<span class="eMember_not_a_member_msg"> </span>';
+        $url_text .= '<span class="eMember_not_a_member_msg">(' . EMEMBER_NON_MEMBER . ' <a href="' . $join_url . '">' . EMEMBER_JOIN . '</a>)</span>';
         $url_text .= '</div>';
         return $url_text;
     }
@@ -101,11 +100,11 @@ function get_login_link() {
         }
     }
     $login_url = emember_add_no_redirect_param_if_applicable($login_url);
-    //eMember_not_a_member_msg - modified by ASK 080724
+
     $no_fancy_login = '';
     $no_fancy_login .= '<div class="' . $format_classes . '">';
     $no_fancy_login .= EMEMBER_PLEASE . ' <a href="' . $login_url . '">' . EMEMBER_LOGIN . '</a> ' . EMEMBER_TO_VIEW_CONTENT;
-    $no_fancy_login .= '<span class="eMember_not_a_member_msg"> </span>';
+    $no_fancy_login .= '<span class="eMember_not_a_member_msg">(' . EMEMBER_NON_MEMBER . ' <a href="' . $join_url . '">' . EMEMBER_JOIN . '</a>)</span>';
     $no_fancy_login .= '</div>';
 
     return $no_fancy_login;
@@ -379,7 +378,7 @@ function eMember_compact_login_widget_custom() {
         $login_url = $emember_config->getValue('login_page_url');
         $output .= '<a href="' . $login_url . '">' . EMEMBER_LOGIN . '</a>';
 
-        //Show link to the Join us page - hidden by ASK 080724
+        //Show link to the Join us page - hidden by ASK 121521
         // $output .= EMEMBER_NOT_A_MEMBER_TEXT;
         // $join_url = $emember_config->getValue('eMember_payments_page');
         // $output .= '<a href="' . $join_url . '">' . EMEMBER_JOIN . '</a>';
@@ -453,40 +452,31 @@ function show_login_form() {
     $emember_config = Emember_Config::getInstance();
 
     $msg = $emember_auth->getSavedMessage('eMember_login_status_msg');
+
     $state_code = $emember_auth->getSavedMessage('eMember_login_status_code');
     $join_url = $emember_config->getValue('eMember_payments_page');
     $eMember_multiple_logins = $emember_config->getValue('eMember_multiple_logins');
-    $eMember_pw_visibility_for_login_form = $emember_config->getValue('eMember_pw_visibility_for_login_form');
-
-    wp_enqueue_style('dashicons');
     ob_start();
     ?>
-    <form action="" method="post" class="loginForm wp_emember_loginForm" name="wp_emember_loginForm" id="wp_emember_loginForm">
+    <form action="" method="post" class="loginForm wp_emember_loginForm" name="wp_emember_loginForm" id="wp_emember_loginForm" >
         <?php wp_nonce_field('emember-login-nonce'); ?>
         <table width="95%" border="0" cellpadding="3" cellspacing="5" class="forms">
             <tr>
-                <td colspan="2"><label for="login_user_name" class="eMember_label"><?php echo esc_html(EMEMBER_USER_NAME); ?></label></td>
+                <td colspan="2"><label for="login_user_name" class="eMember_label"><?php echo EMEMBER_USER_NAME; ?></label></td>
             </tr>
             <tr>
-                <td colspan="2"><input class="eMember_text_input" type="text" id="login_user_name" name="login_user_name" size="15" value="<?php echo isset($_POST['login_user_name']) ? esc_attr(stripslashes($_POST['login_user_name'])) : ""; ?>" /></td>
+                <td colspan="2"><input class="eMember_text_input" type="text" id="login_user_name" name="login_user_name" size="15" value="<?php echo isset($_POST['login_user_name']) ? stripslashes($_POST['login_user_name']) : ""; ?>" /></td>
             </tr>
             <tr>
-                <td colspan="2"><label for="login_pwd" class="eMember_label"><?php echo esc_html(EMEMBER_PASSWORD); ?></label></td>
+                <td colspan="2"><label for="login_pwd" class="eMember_label"><?php echo EMEMBER_PASSWORD; ?></label></td>
             </tr>
             <tr>
-                <td style="position:relative;" colspan="2">
-                    <input class="eMember_text_input" type="password" id="login_pwd" name="login_pwd" size="15" value="<?php echo isset($_POST['login_pwd']) ? esc_attr(strip_tags($_POST['login_pwd'])) : ""; ?>" />
-                    <?php
-                    if (isset($eMember_pw_visibility_for_login_form) && !empty($eMember_pw_visibility_for_login_form)) {
-                        echo '<span class="eMember_show_pw_btn"><i class="dashicons dashicons-visibility" aria-hidden="true"></i></span>';
-                    }
-                    ?>
-                </td>
+                <td colspan="2"><input class="eMember_text_input" type="password" id="login_pwd" name="login_pwd" size="15" value="<?php echo isset($_POST['login_pwd']) ? strip_tags($_POST['login_pwd']) : ""; ?>" /></td>
             </tr>
             <?php if (empty($eMember_multiple_logins)): ?>
                 <tr>
                     <td colspan="2">
-                        <div class="eMember_remember_me"><label><input type="checkbox" tabindex="90" value="forever" id="rememberme" name="rememberme" /><span class="eMember_remember_me_label"> <?php echo esc_html(EMEMBER_REMEMBER_ME); ?></span></label></div>
+                        <div class="eMember_remember_me"><label><input type="checkbox" tabindex="90" value="forever" id="rememberme" name="rememberme" /><span class="eMember_remember_me_label"> <?php echo EMEMBER_REMEMBER_ME; ?></span></label></div>
                     </td>
                 </tr>
             <?php endif; ?>
@@ -496,7 +486,7 @@ function show_login_form() {
                     <?php
                         $login_captcha_output = '';
                         $enable_captcha_login_form = $emember_config->getValue('emember_enable_recaptcha_login_form');
-                        if ($enable_captcha_login_form) {
+                        if( $enable_captcha_login_form ){
                             $login_captcha_output = emember_recaptcha_html();
                         }
                         echo apply_filters('emember_captcha_login', $login_captcha_output);
@@ -507,7 +497,7 @@ function show_login_form() {
             <tr>
                 <td colspan="2">
                     <input type="hidden" value="1" name="testcookie" />
-                    <input name="doLogin" type="submit" id="doLogin" class="eMember_button emember_login_submit" value="<?php echo esc_attr(EMEMBER_LOGIN); ?>" />
+                    <input name="doLogin" type="submit" id="doLogin" class="eMember_button emember_login_submit" value="<?php echo EMEMBER_LOGIN; ?>" />
                 </td>
             </tr>
             <tr>
@@ -516,24 +506,21 @@ function show_login_form() {
                     $password_reset_url = $emember_config->getValue('eMember_password_reset_page');
                     if ($password_reset_url):
                         ?>
-                        <a id="forgot_pass" href="<?php echo esc_url($password_reset_url); ?>"><?php echo esc_html(EMEMBER_FORGOT_PASS); ?></a>
+                        <a id="forgot_pass" href="<?php echo $password_reset_url; ?>"><?php echo EMEMBER_FORGOT_PASS; ?></a>
                     <?php else : ?>
-                        <a id="forgot_pass" rel="#emember_forgot_pass_prompt" class="forgot_pass_link" href="javascript:void(0);"><?php echo esc_html(EMEMBER_FORGOT_PASS); ?></a>
+                        <a id="forgot_pass" rel="#emember_forgot_pass_prompt" class="forgot_pass_link" href="javascript:void(0);"><?php echo EMEMBER_FORGOT_PASS; ?></a>
                     <?php endif; ?>
                 </td>
             </tr>
             <tr>
-                <td colspan="2"><a id="register" class="register_link" href="<?php echo esc_url($join_url); ?>"><?php echo esc_html(EMEMBER_JOIN_US); ?></a></td>
+                <td colspan="2"><a id="register" class="register_link" href="<?php echo $join_url; ?>"><?php echo EMEMBER_JOIN_US; ?></a></td>
             </tr>
             <tr>
-                <td colspan="2"><span class="<?php echo esc_attr($state_code == 6 ? 'emember_ok' : 'emember_error'); ?>"> <?php echo esc_html($msg); ?> </span></td>
+                <td colspan="2"><span class="<?php echo ($state_code == 6) ? 'emember_ok' : 'emember_error'; ?>"> <?php echo $msg; ?> </span></td>
             </tr>
         </table>
     </form>
     <?php
-    if (isset($eMember_pw_visibility_for_login_form) && !empty($eMember_pw_visibility_for_login_form)) {
-        require_once WP_EMEMBER_PATH . 'js/emember_show_hide_pw.php';
-    }
     $output = ob_get_contents();
     ob_end_clean();
     return $output;

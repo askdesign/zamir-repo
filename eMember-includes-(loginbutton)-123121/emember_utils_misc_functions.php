@@ -145,36 +145,31 @@ function eMember_get_string_between($string, $start, $end) {
 }
 
 function print_password_reset_form() {
-    // Read the email address value
-    isset($_POST['wp_emember_reset_password_email']) ? $email_value = sanitize_email($_POST['wp_emember_reset_password_email']) : $email_value = '';
+    //Read the email address value
+    isset($_POST['wp_emember_reset_password_email']) ? $email_value = strip_tags($_POST['wp_emember_reset_password_email']) : $email_value = '';
 
     $emember_config = Emember_Config::getInstance();
     $enable_recaptcha = $emember_config->getValue('emember_enable_recaptcha');
 
     ob_start();
     if (isset($_POST['wp_emember_email_password_doSend'])) {
-        // Verify nonce
-        if (!isset($_POST['emember_reset_password_nonce']) || !wp_verify_nonce($_POST['emember_reset_password_nonce'], 'emember_reset_password_action')) {
-            wp_die('Nonce verification failed on the password reset form! Please empty any cache then try again.');
-        } else {
-            $captcha_res = emember_recaptcha_verify();
-            if (!$captcha_res->valid) {
-                echo $captcha_res->message;
-            } else {
-                $status = wp_emember_generate_and_mail_password($email_value);
-                if ($status['status_code']) {
-                    echo '<div class="emember_password_reset_success_msg emember_ok">' . $status['msg'] . '</div>';
-                } else {
-                    echo '<div class="emember_password_reset_error_msg emember_error">' . $status['msg'] . '</div>';
-                }
-            }
-        }
+	$captcha_res=emember_recaptcha_verify();
+	if (!$captcha_res->valid) {
+	    echo $captcha_res->message;
+	} else {
+	    $status = wp_emember_generate_and_mail_password($email_value);
+	    if ($status['status_code']) {
+		echo '<div class="emember_password_reset_success_msg emember_ok">' . $status['msg'] . '</div>';
+	    } else {
+		echo '<div class="emember_password_reset_error_msg emember_error">' . $status['msg'] . '</div>';
+	    }
+	}
     }
     ?>
     <script type="text/javascript">
         /* <![CDATA[ */
         jQuery(document).ready(function ($) {
-            <?php include_once(WP_EMEMBER_PATH . '/js/emember_js_form_validation_rules.php'); ?>
+    <?php include_once(WP_EMEMBER_PATH . '/js/emember_js_form_validation_rules.php'); ?>
             $("#wp_emember_mailSendForm").validationEngine('attach');
         });
         /*]]>*/
@@ -182,21 +177,20 @@ function print_password_reset_form() {
     <link rel='stylesheet' href='<?php echo WP_EMEMBER_URL; ?>/css/pure-min.css?ver=<?php echo WP_EMEMBER_VERSION; ?>' type='text/css' media='all' />
     <div id="wp_emember_email_mailForm">
         <?php echo EMEMBER_PASS_RESET_MSG; ?>
-        <form action="" name="wp_emember_mailSendForm" id="wp_emember_mailSendForm1" class="emember_password_reset_form pure-form pure-form-stacked" method="post">
+        <form action="" name="wp_emember_mailSendForm" id="wp_emember_mailSendForm1" class="emember_password_reset_form pure-form pure-form-stacked" method="post"  >
             <fieldset>
-                <input class="validate[required,custom[email]] pure-input-1" title="<?php echo EMEMBER_EMAIL; ?>" placeholder="<?php echo EMEMBER_EMAIL; ?>" type="email" id="wp_emember_reset_password_email" name="wp_emember_reset_password_email" value="<?php echo esc_attr($email_value); ?>" required>
+                <input class="validate[required,custom[email]] pure-input-1" title="<?php echo EMEMBER_EMAIL; ?>" placeholder="<?php echo EMEMBER_EMAIL; ?>" type="email" id="wp_emember_reset_password_email" name="wp_emember_reset_password_email" value="<?php echo $email_value; ?>" required>
             </fieldset>
-            <?php if ($enable_recaptcha) { ?>
-            <fieldset class="emember-centered">
-                <div class="wp_emember_recaptcha">
-                    <?php echo emember_recaptcha_html(); ?>
-                </div>
-            </fieldset>
-            <?php } ?>
+	    <?php if ($enable_recaptcha) { ?>
+	    <fieldset class="emember-centered">
+		<div class="wp_emember_recaptcha">
+	    	    <?php echo emember_recaptcha_html();?>
+		</div>
+	    </fieldset>
+	    <?php } ?>
             <fieldset class="pure-controls emember-centered">
                 <button type="submit" class="pure-button pure-button-primary emember-pw-reset-submit-button"><?php echo EMEMBER_RESET; ?></button>
                 <input name="wp_emember_email_password_doSend" type="hidden" id="wp_emember_email_password_doSend" value="<?php echo EMEMBER_RESET; ?>" />
-                <?php wp_nonce_field('emember_reset_password_action', 'emember_reset_password_nonce'); ?>
             </fieldset>
         </form>
     </div>
@@ -430,14 +424,7 @@ function wp_emember_get_user_details_by_id($key, $member_id) {
 
     if ($key === "more_membership_levels"){
         if (isset($profile->more_membership_levels)) {
-            if( is_array($profile->more_membership_levels) ){
-                //Convert the array to a comma separated string.
-                $more_levels_string = implode(', ', $profile->more_membership_levels);
-            } else {
-                //Legacy values from old version (it is already in a string format)
-                $more_levels_string = $profile->more_membership_levels;
-            }
-            
+            $more_levels_string = implode(',', $profile->more_membership_levels);
             return $more_levels_string;
         }
         return "";
