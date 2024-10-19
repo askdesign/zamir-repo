@@ -303,7 +303,7 @@ function custom_footer_creds_text() {
     echo '<div class="creds"><p>';
     echo 'Copyright &copy; ';
     echo date('Y');
- 	echo ' &middot; <a href="https://shareasale.com/r.cfm?b=1484364&u=838511&m=41388&urllink=&afftrack=">WP Engine - Premium StudioPress Themes</a>>&middot; Site Design and Maintenance by <a href="https://www.askdesign.biz/">ASK Design</a>';
+ 	echo ' &middot; Site Design and Maintenance by <a href="https://www.askdesign.biz/">ASK Design</a>';
     echo '</p></div>';
 }
 
