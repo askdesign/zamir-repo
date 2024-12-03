@@ -2691,6 +2691,7 @@ blockquote {
 
 .header-top a:hover {
     color: #08aee3;
+	color: #f9f9f9;
 }
 
 .header-top input {
@@ -2927,6 +2928,9 @@ h6 {
 .donate {
     background: #9dcc50 none repeat scroll 0 0;
 }
+.genesis-nav-menu .donate a:hover {
+	color: #f9f9f9;
+}
 
 .fb {
   	background: #f9f9f9 url("https://www.zamir.org/wp-content/uploads/images/logos-icons/facebook_active-zamir-32.png") no-repeat scroll center center;
@@ -3072,9 +3076,11 @@ h6 {
 .button-shop, a.button-shop,
 .button-donate, a.button-donate {
 	color: #2d1c3d;
+	text-decoration: none;
 }
 
 .button-shop:hover, a.button-shop:hover, 
+p.button-shop a:hover,
 .button-bkg:hover, a.button-bkg:hover, 
 .button-white:hover, a.button-white:hover, 
 .button-blue:hover, a.button-blue:hover, 
@@ -3100,7 +3106,7 @@ h6 {
 .button-blue {    background-color: #009bcc;  }
 .button-gray {    background-color: #999999;  }
 .button-green {    background-color: #528c28;  }
-.button-greenlite {background-color: #afd374;  background-color: #9dcc50}
+.button-greenlite {background-color: #9dcc50}
 .button-purple {    background-color: #715aa3;  }
 .button-red {    background-color: #b92229;  }
 .button-yellow {    background-color: #c6a83f;  }
