@@ -238,8 +238,18 @@ function eMember_login_widget() {
             'expired' => EMEMBER_EXPIRED,
             'pending' => EMEMBER_PENDING,
             'unsubscribed' => EMEMBER_UNSUBSCRIBED);
-
+        $eMember_secure_rss = $emember_config->getValue('eMember_secure_rss');
         $eMember_show_welcome_page_link = $emember_config->getValue('eMember_show_link_to_after_login_page');
+        $feed_url = get_bloginfo('rss2_url');
+
+        global $wp_rewrite;
+        //$nonce = wp_create_nonce('emember-secure-feed-nonce');
+        if ($wp_rewrite->using_permalinks()){
+            $feed_url .= '?emember_feed_key=' . md5($auth->getUserInfo('member_id'));
+        }
+        else{
+            $feed_url .= '&emember_feed_key=' . md5($auth->getUserInfo('member_id'));
+        }
 
         $logout = get_logout_url();
         $output .= '<div class="eMember_logged_widget">';
@@ -263,7 +273,9 @@ function eMember_login_widget() {
         $output .= '</div>'; //End of eMember_logged_user_info_section
         $output .= '<ul class="eMember_logged_member_resources_links">';
         $output .= '<li class="eMember_logged_logout_link"><a href="' . $logout . '">' . EMEMBER_LOGOUT . '</a></li>';
-
+        if ($eMember_secure_rss){
+            $output .= '<li class="eMember_logged_rss_feed_link"><a href="' . $feed_url . '">' . EMEMBER_MY_FEED . '</a></li>';
+        }
         $edit_profile_page = $emember_config->getValue('eMember_profile_edit_page');
         $support_page = $emember_config->getValue('eMember_support_page');
         if (!empty($edit_profile_page)){
@@ -718,7 +730,7 @@ function emember_get_exipiry_date() {
     return $sub_expires;
 }
 
-function emember_get_expiry_date_additional_levels() {
+function emember_get_exipiry_date_additional_levels() {
     global $wpdb;
     $auth = Emember_Auth::getInstance();
     if (!$auth->isLoggedIn()){
@@ -759,11 +771,6 @@ function emember_get_expiry_date_additional_levels() {
         $additionals[$level->get('alias')] = $sub_expires;
     }
     return $additionals;
-}
-
-function emember_get_exipiry_date_additional_levels(){
-    //Legacy function (delete later). Keeping here to prevent any fatal error on older installs.
-    return emember_get_expiry_date_additional_levels();
 }
 
 function emember_calculate_expiry_date($subcript_period, $subscript_unit, $start_date) {

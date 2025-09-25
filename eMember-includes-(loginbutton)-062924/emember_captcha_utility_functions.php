@@ -39,8 +39,7 @@ function emember_recaptcha_verify() {
             return;
         }
 
-        $submitted_captcha_resp = isset($_REQUEST["g-recaptcha-response"]) ? $_REQUEST["g-recaptcha-response"] : '';
-        $resp = $reCaptcha->verify($submitted_captcha_resp, $_SERVER["REMOTE_ADDR"]);
+        $resp = $reCaptcha->verify($_REQUEST["g-recaptcha-response"], $_SERVER["REMOTE_ADDR"]);
         if ($resp->isSuccess()) {
             //valid reCAPTCHA response.Go ahead with the registration
             $result->valid = true;

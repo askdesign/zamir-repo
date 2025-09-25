@@ -93,7 +93,7 @@ function emember_get_all_level_ids_of_logged_in_member() {
 }
 
 /*
- * Retrieves all the membership level IDs of a given member ID (primary and secondary) and returns an array with all the IDs.
+ * Retrieves all the membership level IDs of a given member ID (primary and secondary) and returns an array with all hte IDs.
  * The code using this function should do an "is_array" check of the return values before using it.
  */
 function emember_get_all_level_ids_of_a_member($member_id) {
@@ -149,27 +149,6 @@ function emember_get_more_membership_level_ids_of_a_member($member_id){
     return $more_levels_array;
 }
 
-function emember_get_more_membership_level_start_dates_of_a_member($member_id){
-    //It retrieves all the additional membership levels and start dates for the given member_id. Returns an array containing the start dates.
-    //Example return value below. Note, it will only list the values for the levels that are currently checked/assigned/selected within the member's profile.
-    //Array ( [4] => 2022-12-12 [2] => 2023-02-14 )
-    //If a startdate value is not present for a level, the value will be empty for that array index. Example: Array ( [6] => [4] => 2022-12-12 [2] => 2023-02-14 )
-    
-    global $wpdb;
-    $query = $wpdb->prepare('SELECT * FROM ' . WP_EMEMBER_MEMBERS_TABLE_NAME . ' WHERE member_id=%s', $member_id);
-    $resultset = $wpdb->get_row($query);
-    if (empty($resultset)) {
-        return 'Member profile not found for the given member id.';
-    }
-
-    //Get the secondary level start dates
-    $additional_levels_startdate = (array) json_decode($resultset->more_membership_levels_start_date, true);
-    
-    //Trim all the values
-    $additional_levels_startdate = array_map('trim', $additional_levels_startdate);
-
-    return $additional_levels_startdate;
-}
 
 function emember_get_more_membership_level_names_of_a_member($member_id){
     //Retrieves all the additional membership level names for the given member_id. Returns an array containg the level names.

@@ -73,12 +73,13 @@ function get_login_link() {
         $format_classes .= ' eMember_protected_message_default';
     }
 
-    //eMember_not_a_member_msg - modified by ASK 080724
+    //eMember_not_a_member_msg - modified by ASK 092525
     if ($eMember_enable_fancy_login) {
         $url_text = '<div class="' . $format_classes . '">';
         $url_text .= EMEMBER_PLEASE . ' <a id="' . microtime(true) . '" class="emember_fancy_login_link activeLink" href="javascript:void(0);">' .
                 EMEMBER_LOGIN . '</a> ' . EMEMBER_TO_VIEW_CONTENT;
-        $url_text .= '<span class="eMember_not_a_member_msg"> </span>';
+        //Show link to the Join us page - hidden by ASK 092525
+        $url_text .= '<span class="eMember_not_a_member_msg"></span>';
         $url_text .= '</div>';
         return $url_text;
     }
@@ -101,11 +102,12 @@ function get_login_link() {
         }
     }
     $login_url = emember_add_no_redirect_param_if_applicable($login_url);
-    //eMember_not_a_member_msg - modified by ASK 080724
+
+    //eMember_not_a_member_msg - modified by ASK 092525
     $no_fancy_login = '';
     $no_fancy_login .= '<div class="' . $format_classes . '">';
     $no_fancy_login .= EMEMBER_PLEASE . ' <a href="' . $login_url . '">' . EMEMBER_LOGIN . '</a> ' . EMEMBER_TO_VIEW_CONTENT;
-    $no_fancy_login .= '<span class="eMember_not_a_member_msg"> </span>';
+    $no_fancy_login .= '<span class="eMember_not_a_member_msg"></span>';
     $no_fancy_login .= '</div>';
 
     return $no_fancy_login;
@@ -239,18 +241,8 @@ function eMember_login_widget() {
             'expired' => EMEMBER_EXPIRED,
             'pending' => EMEMBER_PENDING,
             'unsubscribed' => EMEMBER_UNSUBSCRIBED);
-        $eMember_secure_rss = $emember_config->getValue('eMember_secure_rss');
-        $eMember_show_welcome_page_link = $emember_config->getValue('eMember_show_link_to_after_login_page');
-        $feed_url = get_bloginfo('rss2_url');
 
-        global $wp_rewrite;
-        //$nonce = wp_create_nonce('emember-secure-feed-nonce');
-        if ($wp_rewrite->using_permalinks()){
-            $feed_url .= '?emember_feed_key=' . md5($auth->getUserInfo('member_id'));
-        }
-        else{
-            $feed_url .= '&emember_feed_key=' . md5($auth->getUserInfo('member_id'));
-        }
+        $eMember_show_welcome_page_link = $emember_config->getValue('eMember_show_link_to_after_login_page');
 
         $logout = get_logout_url();
         $output .= '<div class="eMember_logged_widget">';
@@ -274,9 +266,7 @@ function eMember_login_widget() {
         $output .= '</div>'; //End of eMember_logged_user_info_section
         $output .= '<ul class="eMember_logged_member_resources_links">';
         $output .= '<li class="eMember_logged_logout_link"><a href="' . $logout . '">' . EMEMBER_LOGOUT . '</a></li>';
-        if ($eMember_secure_rss){
-            $output .= '<li class="eMember_logged_rss_feed_link"><a href="' . $feed_url . '">' . EMEMBER_MY_FEED . '</a></li>';
-        }
+
         $edit_profile_page = $emember_config->getValue('eMember_profile_edit_page');
         $support_page = $emember_config->getValue('eMember_support_page');
         if (!empty($edit_profile_page)){
@@ -731,7 +721,7 @@ function emember_get_exipiry_date() {
     return $sub_expires;
 }
 
-function emember_get_exipiry_date_additional_levels() {
+function emember_get_expiry_date_additional_levels() {
     global $wpdb;
     $auth = Emember_Auth::getInstance();
     if (!$auth->isLoggedIn()){
@@ -772,6 +762,11 @@ function emember_get_exipiry_date_additional_levels() {
         $additionals[$level->get('alias')] = $sub_expires;
     }
     return $additionals;
+}
+
+function emember_get_exipiry_date_additional_levels(){
+    //Legacy function (delete later). Keeping here to prevent any fatal error on older installs.
+    return emember_get_expiry_date_additional_levels();
 }
 
 function emember_calculate_expiry_date($subcript_period, $subscript_unit, $start_date) {

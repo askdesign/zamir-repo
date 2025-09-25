@@ -226,28 +226,26 @@ function wp_emember_generate_and_mail_password($email) {
         }
 
         require_once(WP_EMEMBER_PATH . 'lib/class.emember_rand_pass.php');
+        include_once(ABSPATH . WPINC . '/class-phpass.php');
+        $wp_hasher = new PasswordHash(8, TRUE);
 
-        $generated_plain_pass = eMember_Rand_Pass_Utility::generate_password();
-        //Filter hook to customize the generated plain password.
-        $generated_plain_pass = apply_filters('emember_generate_and_mail_plain_password', $generated_plain_pass);
-        
-        //Send mail from here with user name & password
+        $reset_pass = eMember_Rand_Pass_Utility::generate_password();
+        //send mail from here with user name & password
         $wp_user_id = username_exists($user->user_name);
         if ($wp_user_id) {
             $wp_user_info = array();
-            $wp_user_info['user_pass'] = $generated_plain_pass;
+            $wp_user_info['user_pass'] = $reset_pass;
             $wp_user_info['ID'] = $wp_user_id;
             wp_update_user($wp_user_info);
         }
         $fields = array();
-        $hashed_password = wp_hash_password($generated_plain_pass);
-        
-        $fields['password'] = esc_sql($hashed_password);
+        $password = $wp_hasher->HashPassword($reset_pass);
+        $fields['password'] = esc_sql($password);
         dbAccess::update(WP_EMEMBER_MEMBERS_TABLE_NAME, 'member_id = ' . $user->member_id, $fields);
         $email_body = $emember_config->getValue('eMember_fogot_pass_email_body');
         $email_subject = $emember_config->getValue('eMember_fogot_pass_email_subject');
         $tags1 = array("{first_name}", "{last_name}", "{user_name}", "{password}");
-        $vals1 = array($user->first_name, $user->last_name, $user->user_name, $generated_plain_pass);
+        $vals1 = array($user->first_name, $user->last_name, $user->user_name, $reset_pass);
         $email_body = str_replace($tags1, $vals1, $email_body);
         $from_address = $emember_config->getValue('eMember_fogot_pass_senders_email_address');
         $headers = 'From: ' . $from_address . "\r\n";
@@ -255,7 +253,7 @@ function wp_emember_generate_and_mail_password($email) {
         eMember_log_debug("Member password reset email sent to : " . $emailId, true);
 
         //Update the affiliate profile password if applicable
-        eMember_handle_affiliate_password_reset($emailId, $hashed_password);
+        eMember_handle_affiliate_password_reset($emailId, $password);
 
         return array('status_code' => true, 'msg' => EMEMBER_PASS_EMAILED_MSG);
     } else {
@@ -476,21 +474,6 @@ function wp_emember_get_user_details_by_id($key, $member_id) {
     if (isset($customUserInfo[$key]) && !empty($customUserInfo[$key])) {
         return stripslashes($customUserInfo[$key]);
     }
-}
-
-/*
- * This function returns an array containing ALL the custom fields of a member (includes custom fields from Form Builder addon and Core plugin).
- */
-function wp_emember_get_all_custom_fields_of_member($member_id){
-    if(empty($member_id)){
-        echo '<br />Error! the member_id parameter is required for the function: wp_emember_get_all_custom_fields_of_member().';
-        exit;
-    }
-    $custom_fields_data = dbAccess::find(WP_EMEMBER_MEMBERS_META_TABLE, 'user_id=' . $member_id . ' AND meta_key=\'custom_field\'');
-    $custom_fields_data = maybe_unserialize(isset($custom_fields_data->meta_value) ? $custom_fields_data->meta_value : '');
-    //print_r($custom_fields_data);//Debug purpose.
-    //Example Output: Array ( [Your_Role] => my role value [Your_Focus] => 2 [custom-field-1] => Field one value ) 
-    return $custom_fields_data;
 }
 
 function wp_eMember_get_user_details($user_info) {
@@ -904,10 +887,6 @@ function emember_update_wp_role_for_member($eMember_username, $role_name) {
     $user_wp_integration = $emember_config->getValue('eMember_create_wp_user');
     if ($user_wp_integration) {
         $user_info = get_user_by('login', $eMember_username);
-        if( !isset($user_info->ID) || empty($user_info->ID) ){
-            //Could not find any corresponding WP user record for this member. Nothing to do.
-            return;
-        }
         eMember_log_debug("The username of the member: " . $eMember_username . ", WP User ID is: " . $user_info->ID . ", Target role name: " . $role_name, true);
         update_wp_user_Role($user_info->ID, $role_name);
     }
