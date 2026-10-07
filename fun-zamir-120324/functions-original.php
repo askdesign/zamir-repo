@@ -7,35 +7,19 @@ define( 'CHILD_THEME_NAME', 'Fun' );
 define( 'CHILD_THEME_URL', 'http://www.prettydarncute.com/' );
 define( 'CHILD_THEME_VERSION', '1.0.0' );
 
-//* Enqueue Google font
-add_action( 'wp_enqueue_scripts', 'genesis_sample_google_fonts' );
-function genesis_sample_google_fonts() {
-	wp_enqueue_style( 'google-font', '//fonts.googleapis.com/css?family=Alice|Quattrocento+Sans:400,400italic,700,700italic', array(), PARENT_THEME_VERSION );
-}
-
-
-// Load Font Awesome
-add_action( 'wp_enqueue_scripts', 'enqueue_font_awesome' );
-function enqueue_font_awesome() {
-
-	wp_enqueue_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css' );
-
-}
-
 //* Add HTML5 markup structure
-add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption' ) );
-
+add_theme_support( 'html5' );
 
 //* Add viewport meta tag for mobile browsers
 add_theme_support( 'genesis-responsive-viewport' );
 
-//* Add support for custom header - Eliminate this support for responsiveness
-//* add_theme_support( 'custom-header', array(
-//*	'width'           => 422,
-//*	'height'          => 200,
-//*	'header-selector' => '.site-title a',
-//*	'header-text'     => false,
-//*) );
+//* Add support for custom header
+add_theme_support( 'custom-header', array(
+	'width'           => 640,
+	'height'          => 200,
+	'header-selector' => '.site-title a',
+	'header-text'     => false,
+) );
 
 //* Add support for 3-column footer widgets
 add_theme_support( 'genesis-footer-widgets', 3 );
@@ -144,44 +128,26 @@ if ( !is_page() ) {
 }}
 
 //* Footer credits
-/* add_filter('genesis_pre_get_option_footer_text', 'fun_footer_creds_filter');
+add_filter('genesis_footer_creds_text', 'fun_footer_creds_filter');
 function fun_footer_creds_filter( $creds ) {
 
 	$creds = '[footer_copyright] &middot; Fun Genesis WordPress Theme by, <a href="http://prettydarncute.com">Pretty Darn Cute Design</a>';
 	return $creds;
 
-} */
-
+}
 
 //* Reposition the secondary navigation menu
 remove_action( 'genesis_after_header', 'genesis_do_subnav' );
-add_action( 'genesis_before_header', 'genesis_do_subnav' );
+add_action( 'genesis_before_footer', 'genesis_do_subnav' );
 
-//* Expand the secondary navigation menu to two level depth
+//* Reduce the secondary navigation menu to one level depth
 add_filter( 'wp_nav_menu_args', 'fun_secondary_menu_args' );
 function fun_secondary_menu_args( $args ){
 
 	if( 'secondary' != $args['theme_location'] )
 	return $args;
 
-	$args['depth'] = 2;
-	return $args;
-}
-
-// Assign menus conditionally in Secondary Navigation Menu location - Sridhar
-add_filter( 'wp_nav_menu_args', 'replace_menu_in_secondary' );
-function replace_menu_in_secondary( $args ) {
-	if ( $args['theme_location'] != 'secondary' ) {
-		return $args;
-	}
-
-if ( wp_emember_is_member_logged_in('2') ) {//Show this menu to members of membership level 2
-		$args['menu'] = 'Tutti';
-	} else if ( wp_emember_is_member_logged_in('3') ) {//Show this menu to members of membership level 3
-		$args['menu'] = 'Board';
-	} else if ( wp_emember_is_member_logged_in('4') ) {//Show this menu to members of membership level 4
-		$args['menu'] = 'Staff';
-	}
+	$args['depth'] = 1;
 	return $args;
 }
  
@@ -235,9 +201,8 @@ function enqueue_dashicons() {
 //* Add woocommerce support
 add_theme_support( 'genesis-connect-woocommerce' );
 
-/* create_function was removed in PHP 8.0. -- comment out this section
 //* Woocommerce products per page
-add_filter( 'loop_shop_per_page', create_function( '$cols', 'return 24;' ), 20 ); */
+add_filter( 'loop_shop_per_page', create_function( '$cols', 'return 24;' ), 20 );
 
 //* Customize search form input box text
 add_filter( 'genesis_search_text', 'fun_search_text' );
@@ -296,53 +261,3 @@ genesis_register_sidebar( array(
 	'name' 			=> __( 'Right Header Widget', 'fun' ),
 	'description' 	=> __( 'This is the right side of your header.', 'fun' ),
 ) );
-
-
-/** Customize the credits */
-/* add_filter('genesis_pre_get_option_footer_text', 'custom_footer_creds_text');
-function custom_footer_creds_text() {
-    echo '<div class="creds"><p>';
-    echo 'Copyright &copy; ';
-    echo date('Y');
- 	echo ' &middot; Site Design and Maintenance by <a href="https://www.askdesign.biz/">ASK Design</a>';
-    echo '</p></div>';
-} */
-
-/** Genesis 2.2.2 - full array is headings, drop-down-menu, search-form, skip-links, rems **/
-add_theme_support( 'genesis-accessibility', 
-  array( 'headings', 'drop-down-menu', 'search-form' ) 
-);
-
-/** COMMENTS MODIFICATIONS **/
-//* Modify the speak your mind title in comments
-add_filter( 'comment_form_defaults', 'sp_comment_form_defaults' );
-function sp_comment_form_defaults( $defaults ) {
- 
-	$defaults['title_reply'] = __( 'Write a Tribute' );
-	return $defaults;
- 
-}
-//* Change comment label above comment field to tribute
-//* Brad Dalton's code snippet
-function wpsites_modify_comment_form_text_area($arg) {
-    $arg['comment_field'] = '<p class="comment-form-comment"><label for="comment">' . _x( 'Your Tribute', 'noun' ) . '</label><textarea id="comment" name="comment" cols="45" rows="10" aria-required="true"></textarea></p>';
-    return $arg;
-}
-
-add_filter('comment_form_defaults', 'wpsites_modify_comment_form_text_area');
-
-//* Modify comments title text in comments - original head was Discussions
-add_filter( 'genesis_title_comments', 'sp_genesis_title_comments' );
-function sp_genesis_title_comments() {
-	$title = '<h3>Tributes</h3>';
-	return $title;
-}
-
-//* Customize the submit button text in comments
-add_filter( 'comment_form_defaults', 'sp_comment_submit_button' );
-function sp_comment_submit_button( $defaults ) {
- 
-        $defaults['label_submit'] = __( 'Submit', 'custom' );
-        return $defaults;
- 
-}

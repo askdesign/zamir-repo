@@ -22,9 +22,9 @@ function enqueue_font_awesome() {
 
 }
 
-//* Add HTML5 markup structure
-add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption' ) );
 
+//* Add HTML5 markup structure
+add_theme_support( 'html5' );
 
 //* Add viewport meta tag for mobile browsers
 add_theme_support( 'genesis-responsive-viewport' );
@@ -144,14 +144,13 @@ if ( !is_page() ) {
 }}
 
 //* Footer credits
-/* add_filter('genesis_pre_get_option_footer_text', 'fun_footer_creds_filter');
+add_filter('genesis_footer_creds_text', 'fun_footer_creds_filter');
 function fun_footer_creds_filter( $creds ) {
 
 	$creds = '[footer_copyright] &middot; Fun Genesis WordPress Theme by, <a href="http://prettydarncute.com">Pretty Darn Cute Design</a>';
 	return $creds;
 
-} */
-
+}
 
 //* Reposition the secondary navigation menu
 remove_action( 'genesis_after_header', 'genesis_do_subnav' );
@@ -299,14 +298,14 @@ genesis_register_sidebar( array(
 
 
 /** Customize the credits */
-/* add_filter('genesis_pre_get_option_footer_text', 'custom_footer_creds_text');
+add_filter('genesis_footer_creds_text', 'custom_footer_creds_text');
 function custom_footer_creds_text() {
     echo '<div class="creds"><p>';
     echo 'Copyright &copy; ';
     echo date('Y');
  	echo ' &middot; Site Design and Maintenance by <a href="https://www.askdesign.biz/">ASK Design</a>';
     echo '</p></div>';
-} */
+}
 
 /** Genesis 2.2.2 - full array is headings, drop-down-menu, search-form, skip-links, rems **/
 add_theme_support( 'genesis-accessibility', 
